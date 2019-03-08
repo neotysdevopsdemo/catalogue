@@ -1,11 +1,11 @@
 FROM golang:1.7
 
-COPY . /go/src/github.com/microservices-demo/catalogue
-WORKDIR /go/src/github.com/microservices-demo/catalogue
+COPY . src/github.com/neotysdevopsdemo/docker/catalogue
+WORKDIR src/github.com/neotysdevopsdemo/docker/catalogue
 
 RUN go get -u github.com/FiloSottile/gvt
 RUN gvt restore && \
-    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app github.com/microservices-demo/catalogue/cmd/cataloguesvc
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app github.com/neotysdevopsdemo/catalogue/cmd/cataloguesvc
 
 FROM alpine:3.4
 

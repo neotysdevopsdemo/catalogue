@@ -44,18 +44,22 @@ pipeline {
         }*/
 
           sh '''
-            export GOPATH=$PWD
+            mkdir -p src/github.com/neotysdevopsdemo/
 
-            cp -r $WORKSPACE/images/ $WORKSPACE/docker/catalogue/images/
-            cp -r $WORKSPACE/cmd/ $WORKSPACE/docker/catalogue/cmd/
-            cp $WORKSPACE/*.go $WORKSPACE/docker/catalogue/
-            mkdir -p $WORKSPACE/docker/catalogue/vendor/
-            cp $WORKSPACE/vendor/manifest $WORKSPACE/docker/catalogue/vendor/
+     
+       
+
+            cp -r $WORKSPACE/docker/ src/github.com/neotysdevopsdemo/
+            cp -r $WORKSPACE/images/ src/github.com/neotysdevopsdemo/docker/catalogue/images/
+            cp -r $WORKSPACE/cmd/ src/github.com/neotysdevopsdemo/docker/catalogue/cmd/
+            cp $WORKSPACE/*.go src/github.com/neotysdevopsdemo/docker/catalogue/
+            mkdir -p src/github.com/neotysdevopsdemo/docker/catalogue/vendor/
+            cp $WORKSPACE/vendor/manifest src/github.com/neotysdevopsdemo/docker/catalogue/vendor/
            
      
 
-            glide install 
-            go build -a -ldflags -linkmode=external -installsuffix cgo -o $WORKSPACE/docker/catalogue/cmd/catalogue main.go
+         //   glide install 
+           // go build -a -ldflags -linkmode=external -installsuffix cgo -o $WORKSPACE/docker/catalogue/cmd/catalogue main.go
           '''
 
       }
