@@ -58,9 +58,9 @@ pipeline {
            
      
 
-         //   glide install 
-           // go build -a -ldflags -linkmode=external -installsuffix cgo -o $WORKSPACE/docker/catalogue/cmd/catalogue main.go
           '''
+            //   glide install
+          // go build -a -ldflags -linkmode=external -installsuffix cgo -o $WORKSPACE/docker/catalogue/cmd/catalogue main.go
 
       }
     }
