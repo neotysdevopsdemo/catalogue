@@ -28,12 +28,11 @@ RUN	chmod +x /app && \
 
 USER ${SERVICE_USER}
 
-ARG BUILD_DATE
+
 ARG BUILD_VERSION
 ARG COMMIT
 
 LABEL org.label-schema.vendor="Weaveworks" \
-  org.label-schema.build-date="${BUILD_DATE}" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Catalogue" \
   org.label-schema.description="REST API for Catalogue service" \
