@@ -50,7 +50,7 @@ pipeline {
             cp -r $WORKSPACE/cmd/ $WORKSPACE/docker/catalogue/cmd/
             cp $WORKSPACE/*.go $WORKSPACE/docker/catalogue/
             mkdir -p $WORKSPACE/docker/catalogue/vendor/
-            cp $WORKSPACE/endor/manifest $WORKSPACE/docker/catalogue/vendor/
+            cp $WORKSPACE/vendor/manifest $WORKSPACE/docker/catalogue/vendor/
            
      
 
