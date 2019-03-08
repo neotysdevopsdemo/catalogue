@@ -99,7 +99,7 @@ pipeline {
               sh 'docker network connect catalogue_master_default docker-lg1'
           }
       }
-    }
+
 
     /*stage('DT Deploy Event') {
         when {
@@ -237,12 +237,10 @@ pipeline {
   }
   post {
         always {
-            always {
-
                 sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/docker-compose.yml down'
                 sh 'docker-compose -f $WORKSPACE/docker-compose.yml down'
 
-            }
+
         }
 
       }
