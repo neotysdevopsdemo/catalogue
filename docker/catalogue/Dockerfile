@@ -5,7 +5,7 @@ WORKDIR src/github.com/neotysdevopsdemo/docker/catalogue
 
 RUN go get -u github.com/FiloSottile/gvt
 RUN gvt restore && \
-    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app github.com/neotysdevopsdemo/docker/catalogue/cmd/cataloguesvc
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app src/github.com/neotysdevopsdemo/docker/catalogue/cmd/cataloguesvc
 
 FROM alpine:3.4
 
@@ -32,7 +32,7 @@ USER ${SERVICE_USER}
 ARG BUILD_VERSION
 ARG COMMIT
 
-LABEL org.label-schema.vendor="Weaveworks" \
+LABEL org.label-schema.vendor="neotysdevopsdemo" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Catalogue" \
   org.label-schema.description="REST API for Catalogue service" \
