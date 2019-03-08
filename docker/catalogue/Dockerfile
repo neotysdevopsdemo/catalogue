@@ -36,8 +36,8 @@ LABEL org.label-schema.vendor="Weaveworks" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Catalogue" \
   org.label-schema.description="REST API for Catalogue service" \
-  org.label-schema.url="https://github.com/microservices-demo/catalogue" \
-  org.label-schema.vcs-url="github.com:microservices-demo/catalogue.git" \
+  org.label-schema.url="https://github.com/neotysdevopsdemo/catalogue" \
+  org.label-schema.vcs-url="github.com:neotysdevopsdemo/catalogue.git" \
   org.label-schema.vcs-ref="${COMMIT}" \
   org.label-schema.schema-version="1.0"
 
