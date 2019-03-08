@@ -46,8 +46,6 @@ pipeline {
           sh '''
             mkdir -p src/github.com/neotysdevopsdemo/
 
-     
-       
 
             cp -r $WORKSPACE/docker/ src/github.com/neotysdevopsdemo/
             cp -r $WORKSPACE/images/ src/github.com/neotysdevopsdemo/docker/catalogue/images/
@@ -57,8 +55,8 @@ pipeline {
             cp $WORKSPACE/vendor/manifest src/github.com/neotysdevopsdemo/docker/catalogue/vendor/
            
      
-
-          '''
+            cp -r  src/github.com/neotysdevopsdemo/docker/catalogue/ go/src/src/github.com/neotysdevopsdemo/docker/catalogue/
+           '''
             //   glide install
           // go build -a -ldflags -linkmode=external -installsuffix cgo -o $WORKSPACE/docker/catalogue/cmd/catalogue main.go
 
