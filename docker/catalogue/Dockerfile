@@ -5,7 +5,7 @@ WORKDIR src/github.com/neotysdevopsdemo/docker/catalogue
 
 RUN go get -u github.com/FiloSottile/gvt
 RUN gvt restore && \
-    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app github.com/neotysdevopsdemo/catalogue/cmd/cataloguesvc
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app github.com/neotysdevopsdemo/docker/catalogue/cmd/cataloguesvc
 
 FROM alpine:3.4
 
