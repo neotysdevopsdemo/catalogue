@@ -134,8 +134,8 @@ pipeline {
 
          sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}.dev.svc/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/PORT_TO_REPLACE/8082/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's,JSONFILE_TO_REPLACE,${NEOLOAD_ANOMALIEDETECTIONFILE},'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
