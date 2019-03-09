@@ -92,7 +92,7 @@ pipeline {
       stage('Start NeoLoad infrastructure') {
 
           steps {
-              sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/doker-compose.yml up -d'
+              sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/docker-compose.yml up -d'
 
           }
 
