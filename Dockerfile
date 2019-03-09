@@ -15,7 +15,7 @@ RUN    chmod +x /catalogue && \
     chown -R ${SERVICE_USER}:${SERVICE_GROUP} /catalogue /images && \
     setcap 'cap_net_bind_service=+ep' /catalogue
 
-ENV APP_PORT 8080
+ENV APP_PORT 80
 #ENV DB_DSN "catalogue_user:default_password@tcp(sockshop-catalogue-db.ckbkxcwrvff7.eu-west-1.rds.amazonaws.com:3306)/catalogue_db"
 ENV DB_DSN "catalogue_user:default_password@tcp(catalogue-db:3306)/socksdb"
 

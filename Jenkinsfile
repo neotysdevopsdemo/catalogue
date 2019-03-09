@@ -3,7 +3,7 @@
 pipeline {
   agent  { label 'master' }
       tools {
-          maven 'Maven 3.6.0'
+          go 'go'
           jdk 'jdk8'
       }
   environment {
@@ -47,15 +47,17 @@ pipeline {
 
             export CODE_DIR=$PWD
 
-            mkdir -p $CODE_DIR/build
-            BUILD_DIR=$CODE_DIR/build
+            export GOPATH=$PWD
 
-            cp -r $CODE_DIR/docker $BUILD_DIR/
-            cp -r $CODE_DIR/images/ $BUILD_DIR/docker/catalogue/images/
-            cp -r $CODE_DIR/cmd/ $BUILD_DIR/docker/catalogue/cmd/
-            cp $CODE_DIR/*.go $BUILD_DIR/docker/catalogue/
-            mkdir -p $BUILD_DIR/docker/catalogue/vendor/ && \
-            cp $CODE_DIR/vendor/manifest $BUILD_DIR/docker/catalogue/vendor/
+           mkdir -p src/github.com/neotysdevopsdemo/catalogue/
+           go get -v github.com/Masterminds/glide
+           cp -R ./api src/github.com/neotysdevopsdemo/catalogue/
+           cp -R ./main.go src/github.com/neotysdevopsdemo/catalogue/
+           cp -R ./glide.* src/github.com/neotysdevopsdemo/catalogue/
+           cd src/github.com/neotysdevopsdemo/catalogue
+
+           glide install
+           go build -a -ldflags -linkmode=external -installsuffix cgo -o $GOPATH/catalogue main.go
 
            '''
      
@@ -66,7 +68,7 @@ pipeline {
 
       steps {
           withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
-           sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV}   $WORKSPACE/build/docker/catalogue/"
+           sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV}   $WORKSPACE/"
            sh "docker build build -t ${TAG}-db:${COMMIT} $WORKSPACE/build/docker/catalogue-db/"
            sh "docker login --username=${USER} --password=${TOKEN}"
            sh "docker push ${TAG_DEV}"
