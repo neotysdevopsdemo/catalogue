@@ -52,7 +52,7 @@ pipeline {
             cp -R ./main.go src/github.com/neotysdevopsdemo/catalogue/
             cp -R ./glide.* src/github.com/neotysdevopsdemo/catalogue/
             cd src/github.com/neotysdevopsdemo/catalogue
-
+            go get -v github.com/Masterminds/glide
             glide install 
             go build -a -ldflags -linkmode=external -installsuffix cgo -o $GOPATH/catalogue main.go
 
