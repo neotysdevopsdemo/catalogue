@@ -44,19 +44,22 @@ pipeline {
         }*/
 
           sh '''
+
+            export GOPATH=$PWD
             mkdir -p src/github.com/neotysdevopsdemo/
+            
+            cp -R ./api src/github.com/neotysdevopsdemo/catalogue/
+            cp -R ./main.go src/github.com/neotysdevopsdemo/catalogue/
+            cp -R ./glide.* src/github.com/neotysdevopsdemo/catalogue/
+            cd src/github.com/neotysdevopsdemo/catalogue
 
+            glide install 
+            go build -a -ldflags -linkmode=external -installsuffix cgo -o $GOPATH/catalogue main.go
 
-            cp -r $WORKSPACE/docker/ src/github.com/neotysdevopsdemo/
-            cp -r $WORKSPACE/images/ src/github.com/neotysdevopsdemo/docker/catalogue/images/
-            cp -r $WORKSPACE/cmd/ src/github.com/neotysdevopsdemo/docker/catalogue/cmd/
-            cp $WORKSPACE/*.go src/github.com/neotysdevopsdemo/docker/catalogue/
-            mkdir -p src/github.com/neotysdevopsdemo/docker/catalogue/vendor/
-            cp $WORKSPACE/vendor/manifest src/github.com/neotysdevopsdemo/docker/catalogue/vendor/
+          
            
      
-            cp -r  src/github.com/neotysdevopsdemo/docker/catalogue/ go/src/src/github.com/neotysdevopsdemo/docker/catalogue/
-           '''
+         '''
             //   glide install
           // go build -a -ldflags -linkmode=external -installsuffix cgo -o $WORKSPACE/docker/catalogue/cmd/catalogue main.go
 
@@ -66,7 +69,7 @@ pipeline {
 
       steps {
           withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
-           sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV}  $WORKSPACE/docker/catalogue"
+           sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV}  "
            sh "docker build build -t ${TAG}-db:${COMMIT} $WORKSPACE/docker/catalogue-db/"
            sh "docker login --username=${USER} --password=${TOKEN}"
            sh "docker push ${TAG_DEV}"
