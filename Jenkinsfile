@@ -69,7 +69,7 @@ pipeline {
           withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
            sh "docker pull ${GROUP}/${APP_NAME}:DEV-0.1"
            sh "docker tag ${GROUP}/${APP_NAME}:DEV-0.1 ${TAG_DEV}"
-           sh "docker build build -t ${TAG}-db:${COMMIT} $WORKSPACE/build/docker/catalogue-db/"
+           sh "docker build -t ${TAG}-db:${COMMIT} $WORKSPACE/build/docker/catalogue-db/"
            sh "docker login --username=${USER} --password=${TOKEN}"
            sh "docker push ${TAG_DEV}"
            sh "docker push ${TAG}-db:${COMMIT}"
