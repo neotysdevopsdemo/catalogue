@@ -57,7 +57,7 @@ pipeline {
             mkdir -p $BUILD_DIR/docker/catalogue/vendor/ && \
             cp $CODE_DIR/vendor/manifest $BUILD_DIR/docker/catalogue/vendor/
 
-           
+           '''
      
 
       }
