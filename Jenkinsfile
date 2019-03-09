@@ -56,8 +56,7 @@ pipeline {
            cp -R ./glide.* src/github.com/neotysdevopsdemo/catalogue/
            cd src/github.com/neotysdevopsdemo/catalogue
 
-           glide install
-           go build -a -ldflags -linkmode=external -installsuffix cgo -o $GOPATH/catalogue main.go
+
 
            '''
      
@@ -68,7 +67,8 @@ pipeline {
 
       steps {
           withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
-           sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV}   $WORKSPACE/"
+           sh "docker pull ${GROUP}/${APP_NAME}:DEV-0.1"
+           sh "docker tag $${GROUP}/${APP_NAME}:DEV-0.1 ${TAG_DEV}"
            sh "docker build build -t ${TAG}-db:${COMMIT} $WORKSPACE/build/docker/catalogue-db/"
            sh "docker login --username=${USER} --password=${TOKEN}"
            sh "docker push ${TAG_DEV}"
@@ -83,7 +83,7 @@ pipeline {
 
       steps {
           sh "sed -i 's,TAG_TO_REPLACE,${TAG_DEV},'  $WORKSPACE/docker-compose.yml"
-          sh "sed -i 's,TAG_TO_REPLACE,${TAG}-db:${COMMIT},'  $WORKSPACE/docker-compose.yml"
+          sh "sed -i 's,TAGDB_TO_REPLACE,${TAG}-db:${COMMIT},'  $WORKSPACE/docker-compose.yml"
           sh 'docker-compose -f $WORKSPACE/docker-compose.yml up -d'
 
       }
