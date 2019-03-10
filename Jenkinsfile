@@ -138,9 +138,9 @@ pipeline {
          sh "sed -i 's/PORT_TO_REPLACE/8082/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's,JSONFILE_TO_REPLACE,${NEOLOAD_ANOMALIEDETECTIONFILE},'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's,JSONFILE_TO_REPLACE,$WORKSPACE/monspec/catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's,OUTPUTFILE_TO_REPLACE,${OUTPUTSANITYCHECK},'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's,OUTPUTFILE_TO_REPLACE,$WORKSPACE/infrastructure/sanitycheck.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
         script {
 
             neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
@@ -181,14 +181,14 @@ pipeline {
 
 
 
-                  echo "push ${OUTPUTSANITYCHECK}"
+                  echo "push $WORKSPACE/infrastructure/sanitycheck.json"
                   //---add the push of the sanity check---
                   withCredentials([usernamePassword(credentialsId: 'git-credentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                       sh "git config --global user.email ${GIT_USERNAME}"
                       sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/catalogue"
                       sh "git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
                       sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/catalogue"
-                      sh "git add ${OUTPUTSANITYCHECK}"
+                      sh "git add $WORKSPACE/infrastructure/sanitycheck.json"
                       sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} '"
                       //  sh "git pull -r origin master"
                       //#TODO handle this exeption
@@ -210,7 +210,7 @@ pipeline {
           script {
               neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                       project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
-                      estName: 'FuncCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
+                      testName: 'FuncCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
                       testDescription: 'FuncCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
                       commandLineOption: "-project  $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=catalogue,port=8082",
                       scenario: 'CatalogueLoad', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
