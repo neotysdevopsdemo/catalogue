@@ -147,7 +147,7 @@ pipeline {
                     project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
                     testName: 'HealthCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
                     testDescription: 'HealthCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                    commandLineOption: "-project $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=${env.APP_NAME},port=80",
+                    commandLineOption: "-project $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -L BasicCheck=$WORKSPACE/infrastructure/infrastructure/neoload/lg/remote.txt -L Population_Dynatrace_Integration=$WORKSPACE/infrastructure/infrastructure/neoload/lg/local.txt -nlwebToken $NLAPIKEY -variables host=${env.APP_NAME},port=80",
                     scenario: 'BasicCheck', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                     trendGraphs: [
                             [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
@@ -171,7 +171,7 @@ pipeline {
                               project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
                               testName: 'DynatraceSanityCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
                               testDescription: 'DynatraceSanityCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                              commandLineOption: "-project $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -variables host=${env.APP_NAME},port=80 -nlwebToken $NLAPIKEY ",
+                              commandLineOption: "-project $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -L  Population_Dynatrace_SanityCheck=$WORKSPACE/infrastructure/infrastructure/neoload/lg/local.txt -variables host=${env.APP_NAME},port=80 -nlwebToken $NLAPIKEY ",
                               scenario: 'DYNATRACE_SANITYCHECK', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                               trendGraphs: [
                                       [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
@@ -212,7 +212,7 @@ pipeline {
                       project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
                       testName: 'FuncCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
                       testDescription: 'FuncCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                      commandLineOption: "-project  $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=catalogue,port=80",
+                      commandLineOption: "-project  $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -L CatalogueLoad=$WORKSPACE/infrastructure/infrastructure/neoload/lg/remote.txt -L Population_Dynatrace_Integration=$WORKSPACE/infrastructure/infrastructure/neoload/lg/local.txt -nlwebToken $NLAPIKEY -variables host=catalogue,port=80",
                       scenario: 'CatalogueLoad', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                       trendGraphs: [
                               [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
