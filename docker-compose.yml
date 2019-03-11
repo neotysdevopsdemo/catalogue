@@ -15,7 +15,7 @@ services:
         read_only: true
         environment:
             - reschedule=on-node-failure
-            - DT_CUSTOM_PROP=app=catalogue,environment=dev
+            - DT_CUSTOM_PROP=app=catalogue environment=dev
         ports:
             - "8088:80"
     catalogue-db:
@@ -26,7 +26,7 @@ services:
         restart: always
         environment:
             - reschedule=on-node-failure
-            - DT_CUSTOM_PROP=app=catalogue-db,environment=dev
+            - DT_CUSTOM_PROP=app=catalogue-db environment=dev
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
             - MYSQL_ALLOW_EMPTY_PASSWORD=true
             - MYSQL_DATABASE=socksdb
