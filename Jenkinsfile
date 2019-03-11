@@ -166,6 +166,16 @@ pipeline {
             }
         }
               steps {
+                 sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's,JSONFILE_TO_REPLACE,$WORKSPACE/monspec/catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                 sh "sed -i 's,OUTPUTFILE_TO_REPLACE,$WORKSPACE/infrastructure/sanitycheck.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+
                   script {
                       neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                               project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
@@ -207,6 +217,17 @@ pipeline {
             }
         }
       steps {
+
+         sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's,JSONFILE_TO_REPLACE,$WORKSPACE/monspec/catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's,OUTPUTFILE_TO_REPLACE,$WORKSPACE/infrastructure/sanitycheck.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+
           script {
               neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                       project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
