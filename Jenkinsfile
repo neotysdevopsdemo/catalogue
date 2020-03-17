@@ -20,6 +20,8 @@ pipeline {
     OUTPUTSANITYCHECK="$WORKSPACE/infrastructure/sanitycheck.json"
     NEOLOAD_ASCODEFILE="$WORKSPACE/test/neoload/catalogue_neoload.yaml"
     NEOLOAD_ANOMALIEDETECTIONFILE="$WORKSPACE/monspec/catalogue_anomalieDection.json"
+    DOCKER_COMPOSE_TEMPLATE="$WORKSPACE/infrastructure/infrastructure/neoload/docker-compose.template"
+    DOCKER_COMPOSE_LG_FILE = "$WORKSPACE/infrastructure/infrastructure/neoload/docker-compose-neoload.yml"
     BASICCHECKURI="health"
     TAGURI="tags"
     GROUP = "neotysdevopsdemo"
@@ -78,31 +80,38 @@ pipeline {
 
       }
     }
+
+     stage('create docker netwrok') {
+
+                                  steps {
+                                       sh "docker network create ${APP_NAME} || true"
+
+                                  }
+                   }
     stage('Deploy to dev ') {
 
 
       steps {
           sh "sed -i 's,TAG_TO_REPLACE,${TAG_DEV},'  $WORKSPACE/docker-compose.yml"
           sh "sed -i 's,TAGDB_TO_REPLACE,${TAG}-db:${COMMIT},'  $WORKSPACE/docker-compose.yml"
+          sh "sed -i 's,TO_REPLACE,${APP_NAME},' $WORKSPACE/docker-compose.yml"
           sh 'docker-compose -f $WORKSPACE/docker-compose.yml up -d'
 
       }
     }
 
-      stage('Start NeoLoad infrastructure') {
+     stage('Start NeoLoad infrastructure') {
 
-          steps {
-              sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/docker-compose.yml up -d'
+                                steps {
+                                           sh "cp -f ${DOCKER_COMPOSE_LG_TEMPLATE_FILE} ${DOCKER_COMPOSE_LG_FILE}"
+                                           sh "sed -i 's,TO_REPLACE,${APP_NAME},'  ${DOCKER_COMPOSE_LG_FILE}"
+                                           sh "sed -i 's,TOKEN_TOBE_REPLACE,$NLAPIKEY,'  ${DOCKER_COMPOSE_LG_FILE}"
+                                           sh 'docker-compose -f ${DOCKER_COMPOSE_LG_FILE} up -d'
+                                           sleep 15
 
-          }
+                                       }
 
-      }
-      stage('Join Load Generators to Application') {
-
-          steps {
-              sh 'docker network connect catalogue_master_default docker-lg1'
-          }
-      }
+                           }
 
 
     /*stage('DT Deploy Event') {
@@ -119,116 +128,38 @@ pipeline {
         }
     }*/
 
-    stage('Run health check in dev') {
-       agent {
-            dockerfile {
-                args '--user root -v /tmp:/tmp --network=catalogue_master_default'
-                dir 'infrastructure/infrastructure/neoload/controller/'
-            }
-       }
-      steps {
-        echo "Waiting for the service to start..."
 
-
-        sleep 250
-
-         sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's,JSONFILE_TO_REPLACE,$WORKSPACE/monspec/catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's,OUTPUTFILE_TO_REPLACE,$WORKSPACE/infrastructure/sanitycheck.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-        script {
-
-            neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
-                    project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
-                    testName: 'HealthCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                    testDescription: 'HealthCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                    commandLineOption: "-project $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -L BasicCheck=$WORKSPACE/infrastructure/infrastructure/neoload/lg/remote.txt -L Population_Dynatrace_Integration=$WORKSPACE/infrastructure/infrastructure/neoload/lg/local.txt -nlwebToken $NLAPIKEY -variables host=${env.APP_NAME},port=80",
-                    scenario: 'BasicCheck', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
-                    trendGraphs: [
-                            [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
-                            'ErrorRate'
-                    ]
-
-        }
-
-      }
-    }
-    stage('Sanity Check') {
-        agent {
-            dockerfile {
-                args '--user root -v /tmp:/tmp --network=catalogue_master_default'
-                dir 'infrastructure/infrastructure/neoload/controller/'
-            }
-        }
-              steps {
-                 sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's,JSONFILE_TO_REPLACE,$WORKSPACE/monspec/catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                 sh "sed -i 's,OUTPUTFILE_TO_REPLACE,$WORKSPACE/infrastructure/sanitycheck.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-
-                  script {
-                      neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
-                              project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
-                              testName: 'DynatraceSanityCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                              testDescription: 'DynatraceSanityCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
-                              commandLineOption: "-project $WORKSPACE/test/neoload/catalogue_neoload.yaml -nlweb -L  Population_Dynatrace_SanityCheck=$WORKSPACE/infrastructure/infrastructure/neoload/lg/local.txt -variables host=${env.APP_NAME},port=80 -nlwebToken $NLAPIKEY ",
-                              scenario: 'DYNATRACE_SANITYCHECK', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
-                              trendGraphs: [
-                                      [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
-                                      'ErrorRate'
-                              ]
-                  }
-
-
-
-                  echo "push $WORKSPACE/infrastructure/sanitycheck.json"
-                  //---add the push of the sanity check---
-                  withCredentials([usernamePassword(credentialsId: 'git-credentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                      sh "git config --global user.email ${GIT_USERNAME}"
-                      sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/catalogue"
-                      sh "git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
-                      sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/catalogue"
-                     // sh "git add $WORKSPACE/infrastructure/sanitycheck.json"
-                      //sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} '"
-                      //  sh "git pull -r origin master"
-                      //#TODO handle this exeption
-                     // sh "git push origin HEAD:master"
-
-                  }
-
-
-              }
-        }
     stage('Run functional check in dev') {
-        agent {
-            dockerfile {
-                args '--user root -v /tmp:/tmp --network=catalogue_master_default'
-                dir 'infrastructure/infrastructure/neoload/controller/'
-            }
-        }
+
       steps {
 
+         sleep 90
+         sh "cp ${NEOLOAD_ANOMALIEDETECTIONFILE} $WORKSPACE/test/neoload/load_template/custom-resources/"
          sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/HOST_TO_REPLACE/${env.APP_NAME}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/DTID_TO_REPLACE/${DYNATRACEID}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-         sh "sed -i 's,JSONFILE_TO_REPLACE,$WORKSPACE/monspec/catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+         sh "sed -i 's,JSONFILE_TO_REPLACE,catalogue_anomalieDection.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's,OUTPUTFILE_TO_REPLACE,$WORKSPACE/infrastructure/sanitycheck.json,'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
 
-          script {
+         sh "mkdir $WORKSPACE/test/neoload/neoload_project"
+         sh "cp $WORKSPACE/test/neoload/catalogue_neoload.yaml $WORKSPACE/test/neoload/load_template/"
+         sh "cd $WORKSPACE/test/neoload/load_template/ ; zip -r $WORKSPACE/test/neoload/neoload_project/neoloadproject.zip ./*"
+
+         sh "docker run --rm \
+                                             -v $WORKSPACE/test/neoload/neoload_project/:/neoload-project \
+                                             -e NEOLOADWEB_TOKEN=$NLAPIKEY \
+                                             -e TEST_RESULT_NAME=FuncCheck_catalogue__${VERSION}_${BUILD_NUMBER} \
+                                             -e SCENARIO_NAME=CatalogueLoad \
+                                             -e CONTROLLER_ZONE_ID=defaultzone \
+                                             -e LG_ZONE_IDS=defaultzone:1 \
+                                             -e AS_CODE_FILES=catalogue_neoload.yaml \
+                                             --network ${APP_NAME} \
+                                              neotys/neoload-web-test-launcher:latest"
+          /*script {
               neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                       project: "$WORKSPACE/test/neoload/load_template/load_template.nlp",
                       testName: 'FuncCheck_catalogue_${VERSION}_${BUILD_NUMBER}',
@@ -239,7 +170,7 @@ pipeline {
                               [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
                               'ErrorRate'
                       ]
-          }
+          }*/
 
       }
     }
