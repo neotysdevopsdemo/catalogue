@@ -134,6 +134,7 @@ pipeline {
       steps {
 
          sleep 90
+         sh "mkdir $WORKSPACE/test/neoload/load_template/custom-resources/"
          sh "cp ${NEOLOAD_ANOMALIEDETECTIONFILE} $WORKSPACE/test/neoload/load_template/custom-resources/"
          sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
          sh "sed -i 's/TAGURL_TO_REPLACE/${TAGURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
