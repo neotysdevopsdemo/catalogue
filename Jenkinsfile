@@ -156,7 +156,7 @@ pipeline {
 
                     sh """
                            export PATH=~/.local/bin:$PATH
-                           neoload validate $WORKSPACE/test/neoload/catalogue_neoload.yaml
+                           neoload --refresh validate $WORKSPACE/test/neoload/catalogue_neoload.yaml
                            neoload \
                            login --workspace "Default Workspace" $NLAPIKEY \
                            test-settings  --zone defaultzone --scenario CatalogueLoad create CatalogueDynatrace \
