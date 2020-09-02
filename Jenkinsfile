@@ -142,7 +142,7 @@ pipeline {
                 stage('Run functional check in dev') {
 
                   steps {
-
+                    withEnv(["HOME=${env.WORKSPACE}"]) {
                      sleep 90
                      sh "mkdir $WORKSPACE/test/neoload/load_template/custom-resources/"
                      sh "sed -i 's/CHECK_TO_REPLACE/${BASICCHECKURI}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
@@ -163,6 +163,7 @@ pipeline {
                            project --path $WORKSPACE/test/neoload upload
                       """
 
+                    }
                   }
                 }
                  stage('Run Test') {
