@@ -73,20 +73,6 @@ populations:
   - name: CatalogueLoad
     distribution: 100%
 scenarios:
-- name: BasicCheck
-  populations:
-  - name: BasicCheck
-    constant_load:
-      users: 1
-      duration: 15 iterations
-  apm_configuration:
-    dynatrace_tags:
-    - TAGS_TO_REPLACE
-    dynatrace_anomaly_rules:
-    - metric_id: builtin:service.responsetime
-      operator: ABOVE
-      value: 100
-      severity: PERFORMANCE
 - name: CatalogueLoad
   populations:
   - name: CatalogueLoad
