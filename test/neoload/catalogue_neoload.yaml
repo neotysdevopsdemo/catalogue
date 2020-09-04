@@ -79,10 +79,6 @@ scenarios:
     constant_load:
       users: 1
       duration: 15 iterations
-  - name: Population_Dynatrace_Integration
-    constant_load:
-      users: 1
-      duration: 15 iterations
   apm_configuration:
     dynatrace_tags:
     - TAGS_TO_REPLACE
@@ -95,13 +91,9 @@ scenarios:
   populations:
   - name: CatalogueLoad
     constant_load:
-      users: 20
+      users: 30
       duration: 5m
       rampup: 30s
-  - name: Population_Dynatrace_Integration
-    constant_load:
-      users: 1
-      duration: 5m
   apm_configuration:
     dynatrace_tags:
     - TAGS_TO_REPLACE
