@@ -159,7 +159,7 @@ pipeline {
 
                            neoload \
                            login --workspace "Default Workspace" $NLAPIKEY \
-                           test-settings  --zone defaultzone --scenario CatalogueLoad create CatalogueDynatrace \
+                           test-settings  --zone defaultzone --scenario CatalogueLoad use CatalogueDynatrace \
                            project --path $WORKSPACE/test/neoload upload
                       """
 
