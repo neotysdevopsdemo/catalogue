@@ -18,7 +18,8 @@ pipeline {
     DYNATRACEID="https://${env.DT_ACCOUNTID}.live.dynatrace.com/"
     DYNATRACEAPIKEY="${env.DT_API_TOKEN}"
     NLAPIKEY="${env.NL_WEB_API_KEY}"
-    NL_DT_TAG="app:${env.APP_NAME},environment:dev"
+    NL_DT_TAG_APP="app:${env.APP_NAME}"
+    NL_DT_TAG_ENV="environment:dev"
     OUTPUTSANITYCHECK="$WORKSPACE/infrastructure/sanitycheck.json"
     NEOLOAD_ASCODEFILE="$WORKSPACE/test/neoload/catalogue_neoload.yaml"
     NEOLOAD_ANOMALIEDETECTIONFILE="$WORKSPACE/monspec/catalogue_anomalieDection.json"
@@ -152,7 +153,8 @@ pipeline {
                      sh "sed -i 's/PORT_TO_REPLACE/80/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
                      sh "sed -i 's,DTID_TO_REPLACE,${DYNATRACEID},' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
                      sh "sed -i 's/APIKEY_TO_REPLACE/${DYNATRACEAPIKEY}/'  $WORKSPACE/test/neoload/catalogue_neoload.yaml"
-                     sh "sed -i 's/TAGS_TO_REPLACE/${NL_DT_TAG}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                     sh "sed -i 's/TAGS_TO_APP/${NL_DT_TAG_APP}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
+                     sh "sed -i 's/TAGS_ENV/${NL_DT_TAG_ENV}/' $WORKSPACE/test/neoload/catalogue_neoload.yaml"
 
 
 
