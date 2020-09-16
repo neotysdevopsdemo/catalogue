@@ -1,5 +1,7 @@
 
 
+
+
 pipeline {
   agent  { label 'master' }
       tools {
@@ -16,7 +18,7 @@ pipeline {
     DYNATRACEID="https://${env.DT_ACCOUNTID}.live.dynatrace.com/"
     DYNATRACEAPIKEY="${env.DT_API_TOKEN}"
     NLAPIKEY="${env.NL_WEB_API_KEY}"
-    NL_DT_TAG="app:${env.APP_NAME}"
+    NL_DT_TAG="app:${env.APP_NAME},environment:dev"
     OUTPUTSANITYCHECK="$WORKSPACE/infrastructure/sanitycheck.json"
     NEOLOAD_ASCODEFILE="$WORKSPACE/test/neoload/catalogue_neoload.yaml"
     NEOLOAD_ANOMALIEDETECTIONFILE="$WORKSPACE/monspec/catalogue_anomalieDection.json"
