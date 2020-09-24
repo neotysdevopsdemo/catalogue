@@ -103,6 +103,8 @@ pipeline {
       }
     }
 
+
+
      stage('Start NeoLoad infrastructure') {
 
                                 steps {
